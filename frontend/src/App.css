@@ -1,0 +1,514 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: linear-gradient(135deg, #eef5ff, #f8f4ff);
+  color: #263238;
+}
+
+#root {
+  min-height: 100vh;
+}
+
+.app-container {
+  max-width: 1100px;
+  margin: auto;
+  padding: 30px;
+}
+
+.app-header {
+  text-align: center;
+  padding: 30px 20px;
+  margin-bottom: 30px;
+  color: white;
+  background: linear-gradient(135deg, #1769aa, #7048b8);
+  border-radius: 18px;
+  box-shadow: 0 8px 22px rgba(31, 78, 121, 0.2);
+}
+
+.app-header h1 {
+  margin: 0 0 12px;
+  font-size: 32px;
+  color: white;
+}
+
+.app-header p {
+  margin: 8px 0;
+  color: #f0f5ff;
+}
+
+h1 {
+  text-align: center;
+  color: #1f4e79;
+}
+
+h2 {
+  color: #1f4e79;
+  margin-top: 30px;
+}
+
+form {
+  background: white;
+  padding: 25px;
+  border-radius: 15px;
+  box-shadow: 0 5px 18px rgba(0, 0, 0, 0.08);
+  max-width: 600px;
+  margin: auto;
+}
+
+input,
+select,
+textarea {
+  width: 100%;
+  padding: 12px;
+  margin-top: 5px;
+  margin-bottom: 8px;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  font-size: 15px;
+  background: white;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+  outline: none;
+  border-color: #2878c7;
+  box-shadow: 0 0 0 3px rgba(40, 120, 199, 0.15);
+}
+
+button {
+  padding: 11px 18px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  background: linear-gradient(135deg, #1769aa, #3658b5);
+  color: white;
+  font-size: 14px;
+  font-weight: 600;
+  margin: 5px 5px 5px 0;
+  transition: transform 0.2s, box-shadow 0.2s, opacity 0.2s;
+}
+
+button:hover {
+  opacity: 0.95;
+  transform: translateY(-2px);
+  box-shadow: 0 5px 12px rgba(31, 78, 121, 0.2);
+}
+
+button:active {
+  transform: scale(0.97);
+}
+
+.clear-button {
+  background: #64748b;
+}
+
+hr {
+  border: none;
+  border-top: 1px solid #dbe3ef;
+  margin: 30px 0;
+}
+
+.dashboard {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 18px;
+}
+
+.card {
+  background: white;
+  padding: 22px;
+  border-radius: 14px;
+  text-align: center;
+  box-shadow: 0 5px 16px rgba(0, 0, 0, 0.07);
+  border-top: 5px solid #2878c7;
+  transition: transform 0.25s, box-shadow 0.25s;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 22px rgba(0, 0, 0, 0.12);
+}
+
+.card h3 {
+  margin: 5px 0 12px;
+  color: #1f4e79;
+}
+
+.card p {
+  font-size: 28px;
+  font-weight: bold;
+  margin: 0;
+  color: #3658b5;
+}
+
+.medicine-card {
+  background: white;
+  padding: 22px;
+  margin: 18px 0;
+  border-radius: 14px;
+  border-left: 5px solid #2878c7;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.07);
+  transition: transform 0.25s, box-shadow 0.25s;
+  animation: fadeIn 0.4s ease;
+}
+
+.medicine-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 9px 22px rgba(0, 0, 0, 0.11);
+}
+
+.medicine-card h3 {
+  color: #1f4e79;
+  font-size: 22px;
+  margin-top: 0;
+}
+
+.medicine-card p {
+  line-height: 1.6;
+  overflow-wrap: anywhere;
+}
+
+.medicine-card button {
+  margin-top: 10px;
+}
+
+.search-box {
+  max-width: 500px;
+}
+
+label {
+  display: block;
+  margin-top: 10px;
+  margin-bottom: 5px;
+  font-weight: bold;
+}
+
+textarea {
+  font-family: Arial, sans-serif;
+  resize: vertical;
+}
+
+.clear-button {
+  margin-left: 10px;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (max-width: 600px) {
+  .app-container {
+    padding: 15px;
+  }
+
+  .app-header {
+    padding: 22px 14px;
+  }
+
+  .app-header h1 {
+    font-size: 25px;
+  }
+
+  form {
+    padding: 18px;
+  }
+
+  .dashboard {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+  }
+
+  .card {
+    min-width: 0;
+    padding: 15px 8px;
+  }
+
+  .medicine-card {
+    padding: 16px;
+  }
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: linear-gradient(135deg, #eef5ff, #f8f4ff);
+  color: #263238;
+}
+
+#root {
+  min-height: 100vh;
+}
+
+.app-container {
+  max-width: 1100px;
+  margin: auto;
+  padding: 30px;
+}
+
+.app-header {
+  text-align: center;
+  padding: 30px 20px;
+  margin-bottom: 30px;
+  color: white;
+  background: linear-gradient(135deg, #1769aa, #7048b8);
+  border-radius: 18px;
+  box-shadow: 0 8px 22px rgba(31, 78, 121, 0.2);
+}
+
+.app-header h1 {
+  margin: 0 0 12px;
+  font-size: 32px;
+  color: white;
+}
+
+.app-header p {
+  margin: 8px 0;
+  color: #f0f5ff;
+}
+
+h1 {
+  text-align: center;
+  color: #1f4e79;
+}
+
+h2 {
+  color: #1f4e79;
+  margin-top: 30px;
+}
+
+form {
+  background: white;
+  padding: 25px;
+  border-radius: 15px;
+  box-shadow: 0 5px 18px rgba(0, 0, 0, 0.08);
+  max-width: 600px;
+  margin: auto;
+}
+
+input,
+select,
+textarea {
+  width: 100%;
+  padding: 12px;
+  margin-top: 5px;
+  margin-bottom: 8px;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  font-size: 15px;
+  background: white;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+  outline: none;
+  border-color: #2878c7;
+  box-shadow: 0 0 0 3px rgba(40, 120, 199, 0.15);
+}
+
+button {
+  padding: 11px 18px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  background: linear-gradient(135deg, #1769aa, #3658b5);
+  color: white;
+  font-size: 14px;
+  font-weight: 600;
+  margin: 5px 5px 5px 0;
+  transition: transform 0.2s, box-shadow 0.2s, opacity 0.2s;
+}
+
+button:hover {
+  opacity: 0.95;
+  transform: translateY(-2px);
+  box-shadow: 0 5px 12px rgba(31, 78, 121, 0.2);
+}
+input,
+select,
+textarea {
+  color: #222 !important;
+  background-color: #fff !important;
+  -webkit-text-fill-color: #222 !important;
+  opacity: 1 !important;
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: #777 !important;
+  opacity: 1 !important;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+  color: #222 !important;
+  background-color: #fff !important;
+}
+button:active {
+  transform: scale(0.97);
+}
+
+.clear-button {
+  background: #64748b;
+}
+
+hr {
+  border: none;
+  border-top: 1px solid #dbe3ef;
+  margin: 30px 0;
+}
+
+.dashboard {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 18px;
+}
+
+.card {
+  background: white;
+  padding: 22px;
+  border-radius: 14px;
+  text-align: center;
+  box-shadow: 0 5px 16px rgba(0, 0, 0, 0.07);
+  border-top: 5px solid #2878c7;
+  transition: transform 0.25s, box-shadow 0.25s;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 22px rgba(0, 0, 0, 0.12);
+}
+
+.card h3 {
+  margin: 5px 0 12px;
+  color: #1f4e79;
+}
+
+.card p {
+  font-size: 28px;
+  font-weight: bold;
+  margin: 0;
+  color: #3658b5;
+}
+
+.medicine-card {
+  background: white;
+  padding: 22px;
+  margin: 18px 0;
+  border-radius: 14px;
+  border-left: 5px solid #2878c7;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.07);
+  transition: transform 0.25s, box-shadow 0.25s;
+  animation: fadeIn 0.4s ease;
+}
+
+.medicine-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 9px 22px rgba(0, 0, 0, 0.11);
+}
+
+.medicine-card h3 {
+  color: #1f4e79;
+  font-size: 22px;
+  margin-top: 0;
+}
+
+.medicine-card p {
+  line-height: 1.6;
+  overflow-wrap: anywhere;
+}
+
+.medicine-card button {
+  margin-top: 10px;
+}
+
+.search-box {
+  max-width: 500px;
+}
+
+label {
+  display: block;
+  margin-top: 10px;
+  margin-bottom: 5px;
+  font-weight: bold;
+}
+
+textarea {
+  font-family: Arial, sans-serif;
+  resize: vertical;
+}
+
+.clear-button {
+  margin-left: 10px;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (max-width: 600px) {
+  .app-container {
+    padding: 15px;
+  }
+
+  .app-header {
+    padding: 22px 14px;
+  }
+
+  .app-header h1 {
+    font-size: 25px;
+  }
+
+  form {
+    padding: 18px;
+  }
+
+  .dashboard {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+  }
+
+  .card {
+    min-width: 0;
+    padding: 15px 8px;
+  }
+
+  .medicine-card {
+    padding: 16px;
+  }
+}
+  .card {
+    min-width: 0;
+    padding: 15px 8px;
+  }
+
+  .medicine-card {
+    padding: 16px;
+  }
+}
