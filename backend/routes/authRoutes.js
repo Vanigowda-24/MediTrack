@@ -8,6 +8,7 @@ const router = express.Router();
 
 // Register
 router.post("/register", async (req, res) => {
+  console.log("LOGIN REQUEST RECEIVED");
   try {
     const { name, email, password } = req.body;
 
@@ -69,6 +70,7 @@ router.post("/login", async (req, res) => {
       password,
       user.password
     );
+    console.log("Password match:", isMatch);
 
     if (!isMatch) {
       return res.status(401).json({

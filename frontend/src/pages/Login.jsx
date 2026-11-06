@@ -26,10 +26,16 @@ function Login({ onLogin, onRegister }) {
 
       if (response.ok) {
         alert("Login successful!");
+
+        // Save login token for notifications
+        localStorage.setItem("token", data.token);
+
         onLogin(data.user);
+
       } else {
         alert(data.message || "Login failed");
       }
+
     } catch (error) {
       console.log("Login error:", error);
       alert("Something went wrong");
