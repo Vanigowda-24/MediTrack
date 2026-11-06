@@ -27,7 +27,25 @@ const medicineSchema = new mongoose.Schema({
 
     quantity: {
         type: Number,
-        required: true
+        required: true,
+        min: 0
+    },
+
+    // Low Stock Alert
+    lowStockThreshold: {
+        type: Number,
+        default: 3,
+        min: 0
+    },
+
+    lowStockAlertEnabled: {
+        type: Boolean,
+        default: true
+    },
+
+    lowStockAlertSent: {
+        type: Boolean,
+        default: false
     },
 
     manufacturingDate: {
@@ -55,4 +73,5 @@ const medicineSchema = new mongoose.Schema({
     }
 });
 
-module.exports = mongoose.model("Medicine", medicineSchema);
+module.exports = mongoose.models.Medicine || mongoose.model("Medicine", medicineSchema);
+

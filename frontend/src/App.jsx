@@ -664,6 +664,20 @@ function App() {
             <p>Dosage: {item.dosage}</p>
             <p>Food Instruction: {item.foodInstruction}</p>
             <p>Quantity: {item.quantity}</p>
+            
+<label>Low Stock Alert Limit:</label>
+<input
+  type="number"
+  name="lowStockThreshold"
+  placeholder="Alert when stock reaches"
+  value={medicine.lowStockThreshold}
+  onChange={handleChange}
+  min="0"
+  required
+/>
+
+<br /><br />
+
 
             <p>
               Manufacturing Date:{" "}
