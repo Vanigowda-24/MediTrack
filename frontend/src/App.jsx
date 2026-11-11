@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import "./App.css";
 import Login from "./pages/Login";
@@ -13,6 +12,7 @@ const initialMedicine = {
   dosage: "",
   foodInstruction: "",
   quantity: "",
+  lowStockThreshold: 3,
   manufacturingDate: "",
   expiryDate: "",
   reminderEnabled: false,
@@ -24,6 +24,7 @@ const weekdays = [
   "Monday", "Tuesday", "Wednesday",
   "Thursday", "Friday", "Saturday", "Sunday"
 ];
+
 function urlBase64ToUint8Array(base64String) {
   const padding = "=".repeat((4 - base64String.length % 4) % 4);
   const base64 = (base64String + padding)
@@ -49,65 +50,66 @@ function App() {
   const [showRegister, setShowRegister] = useState(false);
   const [showFeedback, setShowFeedback] = useState(false);
   const [selectedMedicine, setSelectedMedicine] = useState(null);
+
   const enableNotifications = async () => {
-  try {
-    if (!("serviceWorker" in navigator) || !("PushManager" in window)) {
-      alert("Push notifications are not supported in this browser.");
-      return;
-    }
-
-    const permission = await Notification.requestPermission();
-
-    if (permission !== "granted") {
-      alert("Please allow notifications in your browser.");
-      return;
-    }
-
-    const registration = await navigator.serviceWorker.register(
-      "/service-worker.js"
-    );
-
-    const publicKey = import.meta.env.VITE_VAPID_PUBLIC_KEY;
-
-    if (!publicKey) {
-      alert("VAPID public key is missing.");
-      return;
-    }
-
-    let subscription = await registration.pushManager.getSubscription();
-
-    if (!subscription) {
-      subscription = await registration.pushManager.subscribe({
-        userVisibleOnly: true,
-        applicationServerKey: urlBase64ToUint8Array(publicKey)
-      });
-    }
-
-    const response = await fetch(
-      "http://localhost:5000/api/notifications/subscribe",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${localStorage.getItem("token")}`
-        },
-        body: JSON.stringify(subscription)
+    try {
+      if (!("serviceWorker" in navigator) || !("PushManager" in window)) {
+        alert("Push notifications are not supported in this browser.");
+        return;
       }
-    );
 
-    const data = await response.json();
+      const permission = await Notification.requestPermission();
 
-    if (!response.ok) {
-      throw new Error(data.message || "Subscription failed");
+      if (permission !== "granted") {
+        alert("Please allow notifications in your browser.");
+        return;
+      }
+
+      const registration = await navigator.serviceWorker.register(
+        "/sw.js"
+      );
+
+      const publicKey = import.meta.env.VITE_VAPID_PUBLIC_KEY;
+
+      if (!publicKey) {
+        alert("VAPID public key is missing.");
+        return;
+      }
+
+      let subscription = await registration.pushManager.getSubscription();
+
+      if (!subscription) {
+        subscription = await registration.pushManager.subscribe({
+          userVisibleOnly: true,
+          applicationServerKey: urlBase64ToUint8Array(publicKey)
+        });
+      }
+
+      const response = await fetch(
+        "http://localhost:5000/api/notifications/subscribe",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("token")}`
+          },
+          body: JSON.stringify(subscription)
+        }
+      );
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message || "Subscription failed");
+      }
+
+      alert("Push notifications enabled successfully!");
+
+    } catch (error) {
+      console.error("Notification error:", error);
+      alert("Notification setup failed: " + error.message);
     }
-
-    alert("Push notifications enabled successfully!");
-
-  } catch (error) {
-    console.error("Notification error:", error);
-    alert("Notification setup failed: " + error.message);
-  }
-};
+  };
 
   const [medicine, setMedicine] = useState({ ...initialMedicine });
   const [medicines, setMedicines] = useState([]);
@@ -144,6 +146,11 @@ function App() {
   const expiredMedicines = medicines.filter(
     item => getExpiryStatus(item.expiryDate) === "Expired"
   ).length;
+
+  const lowStockMedicines = medicines.filter(item => {
+    const threshold = Number(item.lowStockThreshold ?? 3);
+    return item.lowStockAlertEnabled !== false && Number(item.quantity) <= threshold;
+  }).length;
 
   const tabletMedicines = medicines.filter(
     item => item.category?.toLowerCase() === "tablet"
@@ -236,6 +243,19 @@ function App() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    if (medicine.quantity === "" || Number(medicine.quantity) < 0) {
+      alert("Please enter a valid medicine quantity.");
+      return;
+    }
+
+    if (
+      medicine.lowStockThreshold === "" ||
+      Number(medicine.lowStockThreshold) < 0
+    ) {
+      alert("Please enter a valid low stock alert limit.");
+      return;
+    }
+
     if (medicine.reminderEnabled) {
       if (medicine.reminderTimes.length === 0) {
         alert("Please add at least one reminder time.");
@@ -261,7 +281,8 @@ function App() {
         body: JSON.stringify({
           ...medicine,
           userId: user.id,
-          quantity: Number(medicine.quantity)
+          quantity: Number(medicine.quantity),
+          lowStockThreshold: Number(medicine.lowStockThreshold)
         })
       });
 
@@ -325,6 +346,7 @@ function App() {
       dosage: item.dosage || "",
       foodInstruction: item.foodInstruction || "",
       quantity: item.quantity ?? "",
+      lowStockThreshold: item.lowStockThreshold ?? 3,
       manufacturingDate: item.manufacturingDate
         ? item.manufacturingDate.substring(0, 10)
         : "",
@@ -386,8 +408,8 @@ function App() {
 
       <button onClick={logout}>Logout</button>
       <button onClick={enableNotifications}>
-  Enable Push Notifications 🔔
-</button>
+        Enable Push Notifications 🔔
+      </button>
 
       <button onClick={() => setShowFeedback(true)}>
         Feedback
@@ -467,6 +489,20 @@ function App() {
           placeholder="Quantity"
           value={medicine.quantity}
           onChange={handleChange}
+          min="0"
+          required
+        />
+
+        <br /><br />
+
+        <label>Low Stock Alert Limit:</label>
+        <input
+          type="number"
+          name="lowStockThreshold"
+          placeholder="Alert when quantity reaches"
+          value={medicine.lowStockThreshold}
+          onChange={handleChange}
+          min="0"
           required
         />
 
@@ -518,19 +554,19 @@ function App() {
         {medicine.reminderTimes.map((time, index) => (
           <div key={index}>
             <input
-  type="time"
-  step="60"
-  value={time}
-  disabled={!medicine.reminderEnabled}
-  onChange={(e) =>
-    updateReminderTime(index, e.target.value)
-  }
-  style={{
-    color: "#222",
-    backgroundColor: "#fff",
-    width: "180px"
-  }}
-/>
+              type="time"
+              step="60"
+              value={time}
+              disabled={!medicine.reminderEnabled}
+              onChange={(e) =>
+                updateReminderTime(index, e.target.value)
+              }
+              style={{
+                color: "#222",
+                backgroundColor: "#fff",
+                width: "180px"
+              }}
+            />
 
             <button
               type="button"
@@ -611,6 +647,11 @@ function App() {
         </div>
 
         <div className="card">
+          <h3>Low Stock</h3>
+          <p>{lowStockMedicines}</p>
+        </div>
+
+        <div className="card">
           <h3>Tablets</h3>
           <p>{tabletMedicines}</p>
         </div>
@@ -664,20 +705,24 @@ function App() {
             <p>Dosage: {item.dosage}</p>
             <p>Food Instruction: {item.foodInstruction}</p>
             <p>Quantity: {item.quantity}</p>
-            
-<label>Low Stock Alert Limit:</label>
-<input
-  type="number"
-  name="lowStockThreshold"
-  placeholder="Alert when stock reaches"
-  value={medicine.lowStockThreshold}
-  onChange={handleChange}
-  min="0"
-  required
-/>
+            <p>Low Stock Alert Limit: {item.lowStockThreshold ?? 3}</p>
 
-<br /><br />
-
+            <p>
+              Stock Status:{" "}
+              <span style={{
+                color:
+                  item.lowStockAlertEnabled !== false &&
+                  Number(item.quantity) <= Number(item.lowStockThreshold ?? 3)
+                    ? "orange"
+                    : "green",
+                fontWeight: "bold"
+              }}>
+                {item.lowStockAlertEnabled !== false &&
+                Number(item.quantity) <= Number(item.lowStockThreshold ?? 3)
+                  ? "Low Stock"
+                  : "Stock OK"}
+              </span>
+            </p>
 
             <p>
               Manufacturing Date:{" "}
