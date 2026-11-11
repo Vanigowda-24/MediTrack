@@ -9,9 +9,8 @@ webpush.setVapidDetails(
     process.env.VAPID_SUBJECT,
     process.env.VAPID_PUBLIC_KEY,
     process.env.VAPID_PRIVATE_KEY
-);
-
-const notificationRoutes = require("./routes/notificationRoutes");
+)
+const notificationRoutes = require('./routes/notificationroutes');
 const medicineRoutes = require("./routes/medicineRoutes");
 const authRoutes = require("./routes/authRoutes");
 const feedbackRoutes = require("./routes/feedbackRoutes");
